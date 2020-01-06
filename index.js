@@ -51,6 +51,28 @@ function calcDepreciation(boats) {
     .value();
 }
 
+function generateChartJs(divId, ...traces) {
+  return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, {
+    margin: { t: 0 }
+  });`;
+}
+
+function extractTrace(data, name, xProperty, yProperty) {
+  return {
+    x: _.pluck(data, xProperty),
+    y: _.pluck(data, yProperty),
+    name: name
+  };
+}
+
+function partitionByType(data) {
+  const partitioned = _.partition(data, boat => boat.type === 'Sailboat');
+  return {
+    sailboats: partitioned[0],
+    powerboats: partitioned[1]
+  };
+}
+
 async function main() {
   const boats = await loadData();
   const inflationAdjuster = await InflationAdjuster.load();
@@ -68,8 +90,12 @@ async function main() {
 
   const boatsWithNewPrice = _.filter(boats, boat => Boolean(boat.newPrice));
 
-  console.log(boatsWithNewPrice);
-  console.log(calcDepreciation(boatsWithNewPrice));
+  const sortedByAge = _.sortBy(boatsWithNewPrice, 'ageAtPurchase');
+  const sortedByAgeByType = partitionByType(sortedByAge);
+  console.log(generateChartJs('depreciation',
+    extractTrace(sortedByAgeByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
+    extractTrace(sortedByAgeByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
+  ));
 }
 
 main();
