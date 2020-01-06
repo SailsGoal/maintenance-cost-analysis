@@ -1,5 +1,6 @@
 import csv from 'csvtojson'
 import _ from 'underscore'
+import fs from 'fs'
 
 const CURRENT_YEAR = 2019;
 
@@ -43,14 +44,6 @@ class InflationAdjuster {
   }
 }
 
-// calculate the percentage of the new-price the vessel still held at its most recent purchase
-function calcDepreciation(boats) {
-  return _.chain(boats)
-    .map(boat => _.pick(boat, 'ageAtPurchase', 'depreciatedValue', 'purchasePrice'))
-    .sortBy('ageAtPurchase')
-    .value();
-}
-
 function generateChartJs(divId, ...traces) {
   return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, {
     margin: { t: 0 }
@@ -92,7 +85,10 @@ async function main() {
 
   const sortedByAge = _.sortBy(boatsWithNewPrice, 'ageAtPurchase');
   const sortedByAgeByType = partitionByType(sortedByAge);
-  console.log(generateChartJs('depreciation',
+
+  // write plots
+  const writeStream = fs.createWriteStream('./plots.js');
+  writeStream.write(generateChartJs('depreciation',
     extractTrace(sortedByAgeByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
     extractTrace(sortedByAgeByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
   ));
