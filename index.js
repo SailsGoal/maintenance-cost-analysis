@@ -55,7 +55,7 @@ function generateChartJs(divId, title, xAxisLabel, yAxisLabel, ...traces) {
     }
   };
 
-  return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, ${JSON.stringify(layout)});`;
+  return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, ${JSON.stringify(layout)});\n`;
 }
 
 function extractTrace(data, name, xProperty, yProperty) {
@@ -91,14 +91,13 @@ async function main() {
 
   const boatsWithNewPrice = _.filter(boats, boat => Boolean(boat.newPrice));
 
-  const sortedByAge = _.sortBy(boatsWithNewPrice, 'ageAtPurchase');
-  const sortedByAgeByType = partitionByType(sortedByAge);
-
   // write plots
   const writeStream = fs.createWriteStream('./plots.js');
+
+  const depreciationByType = partitionByType(_.sortBy(boatsWithNewPrice, 'ageAtPurchase'));
   writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase", "Fraction of Original Price",
-    extractTrace(sortedByAgeByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
-    extractTrace(sortedByAgeByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
+    extractTrace(depreciationByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
+    extractTrace(depreciationByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
   ));
 }
 
