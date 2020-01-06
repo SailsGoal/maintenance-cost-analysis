@@ -99,6 +99,11 @@ async function main() {
     extractTrace(depreciationByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
     extractTrace(depreciationByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
   ));
+
+  const sortedByPurchasePrice = _.sortBy(boats, 'purchasePrice');
+  writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price", "Maintenance Cost",
+    extractTrace(sortedByPurchasePrice, "Boats", 'purchasePrice', 'maintenancePrice')
+  ));
 }
 
 main();
