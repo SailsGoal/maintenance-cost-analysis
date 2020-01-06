@@ -44,10 +44,18 @@ class InflationAdjuster {
   }
 }
 
-function generateChartJs(divId, ...traces) {
-  return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, {
-    margin: { t: 0 }
-  });`;
+function generateChartJs(divId, title, xAxisLabel, yAxisLabel, ...traces) {
+  const layout = {
+    title: title,
+    xaxis: {
+      title: xAxisLabel
+    },
+    yaxis: {
+      title: yAxisLabel
+    }
+  };
+
+  return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, ${JSON.stringify(layout)});`;
 }
 
 function extractTrace(data, name, xProperty, yProperty) {
@@ -88,7 +96,7 @@ async function main() {
 
   // write plots
   const writeStream = fs.createWriteStream('./plots.js');
-  writeStream.write(generateChartJs('depreciation',
+  writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase", "Fraction of Original Price",
     extractTrace(sortedByAgeByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
     extractTrace(sortedByAgeByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
   ));
