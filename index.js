@@ -127,7 +127,7 @@ async function main() {
   {
     const boatsTrace = extractTrace(boatsWithNewPrice, "Boats", 'ageAtPurchase', 'depreciatedValue');
     const regression = exponentialRegression(boatsTrace);
-    writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase", "Fraction of Original Price",
+    writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase (years)", "Fraction of Original Price",
       boatsTrace,
       regression,
     ));
@@ -138,7 +138,7 @@ async function main() {
     const sortedByPurchasePrice = _.sortBy(boats, 'adjustedPurchasePrice');
     const trace0 = extractTrace(sortedByPurchasePrice, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
     const trace1 = linearRegression(trace0);
-    writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price", "Maintenance Cost",
+    writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price (US$)", "Maintenance Cost (US$)",
       trace0,
       trace1
     ));
@@ -149,7 +149,7 @@ async function main() {
     const boatsWithNewPriceSorted = _.sortBy(boatsWithNewPrice, 'adjustedNewPrice');
     const trace0 = extractTrace(boatsWithNewPriceSorted, "Boats", 'adjustedNewPrice', 'maintenancePrice');
     const trace1 = linearRegression(trace0);
-    writeStream.write(generateChartJs('maintenanceNew', "Maintenance Cost vs New Price", "New Price", "Maintenance Cost",
+    writeStream.write(generateChartJs('maintenanceNew', "Maintenance Cost vs New Price", "New Price (US$)", "Maintenance Cost (US$)",
       trace0,
       trace1
     ));
