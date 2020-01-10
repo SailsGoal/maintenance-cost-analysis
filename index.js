@@ -144,6 +144,18 @@ async function main() {
     ));
   }
 
+  // maintenance cost vs purchase price <$50k
+  {
+    const filtered = _.filter(_.sortBy(boats, 'adjustedPurchasePrice'), boat => boat.adjustedPurchasePrice <= 50000);
+    const trace0 = extractTrace(filtered, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
+    const trace1 = linearRegression(trace0);
+    writeStream.write(generateChartJs('maintenancePurchase50k', "Maintenance Cost vs Purchase Price (<$50k)", "Purchase Price (US$)", "Maintenance Cost (US$)",
+      trace0,
+      trace1
+    ));
+  }
+
+
   // maintenance cost vs new price
   {
     const boatsWithNewPriceSorted = _.sortBy(boatsWithNewPrice, 'adjustedNewPrice');
