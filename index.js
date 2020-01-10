@@ -1,6 +1,7 @@
 import csv from 'csvtojson'
 import _ from 'underscore'
 import fs from 'fs'
+import regression from 'regression'
 
 const CURRENT_YEAR = 2019;
 
@@ -62,8 +63,36 @@ function extractTrace(data, name, xProperty, yProperty) {
   return {
     x: _.pluck(data, xProperty),
     y: _.pluck(data, yProperty),
-    name: name
+    name: name,
+    mode: "markers"
   };
+}
+
+function linearRegression(trace) {
+  const points = _.zip(trace.x, trace.y);
+  const result = regression.linear(points);
+  const [x, y] = _.unzip(result.points);
+
+  return {
+    x: x,
+    y: y,
+    name: `Regression of ${trace.name}<br>(${result.string}; r2=${result.r2})`,
+    mode: "lines"
+  }
+}
+
+function exponentialRegression(trace) {
+  const points = _.zip(trace.x, trace.y);
+  const result = regression.exponential(points);
+  const x = _.range(_.min(trace.x), _.max(trace.x) + 1);
+  const y = x.map(x => result.predict(x)[1]);
+
+  return {
+    x: x,
+    y: y,
+    name: `Regression of ${trace.name}<br>(${result.string}; r2=${result.r2})`,
+    mode: "lines"
+  }
 }
 
 function partitionByType(data) {
@@ -94,16 +123,26 @@ async function main() {
   // write plots
   const writeStream = fs.createWriteStream('./plots.js');
 
-  const depreciationByType = partitionByType(_.sortBy(boatsWithNewPrice, 'ageAtPurchase'));
-  writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase", "Fraction of Original Price",
-    extractTrace(depreciationByType.sailboats, "Sailboats", 'ageAtPurchase', 'depreciatedValue'),
-    extractTrace(depreciationByType.powerboats, "Powerboats", 'ageAtPurchase', 'depreciatedValue')
-  ));
+  // depreciation curve
+  {
+    const boatsTrace = extractTrace(boatsWithNewPrice, "Boats", 'ageAtPurchase', 'depreciatedValue');
+    const regression = exponentialRegression(boatsTrace);
+    writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase", "Fraction of Original Price",
+      boatsTrace,
+      regression,
+    ));
+  }
 
-  const sortedByPurchasePrice = _.sortBy(boats, 'purchasePrice');
-  writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price", "Maintenance Cost",
-    extractTrace(sortedByPurchasePrice, "Boats", 'purchasePrice', 'maintenancePrice')
-  ));
+  // maintenance cost vs purchase price
+  {
+    const sortedByPurchasePrice = _.sortBy(boats, 'adjustedPurchasePrice');
+    const trace0 = extractTrace(sortedByPurchasePrice, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
+    const trace1 = linearRegression(trace0);
+    writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price", "Maintenance Cost",
+      trace0,
+      trace1
+    ));
+  }
 }
 
 main();
