@@ -143,6 +143,17 @@ async function main() {
       trace1
     ));
   }
+
+  // maintenance cost vs new price
+  {
+    const boatsWithNewPriceSorted = _.sortBy(boatsWithNewPrice, 'adjustedNewPrice');
+    const trace0 = extractTrace(boatsWithNewPriceSorted, "Boats", 'adjustedNewPrice', 'maintenancePrice');
+    const trace1 = linearRegression(trace0);
+    writeStream.write(generateChartJs('maintenanceNew', "Maintenance Cost vs New Price", "New Price", "Maintenance Cost",
+      trace0,
+      trace1
+    ));
+  }
 }
 
 main();
