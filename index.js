@@ -196,6 +196,18 @@ async function main() {
     ));
   }
 
+  // maintenance cost vs length
+  {
+    const boatsSortedByLength = _.sortBy(boats, 'length');
+    const trace0 = extractTrace(boatsSortedByLength, "Boats", 'length', 'maintenancePrice');
+    const trace1 = exponentialRegression(trace0);
+
+    writeStream.write(generateChartJs('maintenanceLength', "Maintenance Cost vs Length", "Length (ft)", "Maintenance Cost (US$)",
+      trace0,
+      trace1
+    ));
+  }
+
   // maintenance cost vs new price
   {
     const boatsWithNewPriceSorted = _.sortBy(boatsWithNewPrice, 'adjustedNewPrice');
