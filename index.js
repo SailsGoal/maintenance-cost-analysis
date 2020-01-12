@@ -81,6 +81,27 @@ function linearRegression(trace) {
   }
 }
 
+function ruleOfThumbLine(trace, fractionX) {
+  function predict(x) {
+    return fractionX * x;
+  }
+
+  const x = trace.x.slice(); // copy the array
+
+  if (x[0] !== 0) { // make it start at the origin
+    x.unshift(0);
+  }
+
+  const y = x.map(predict);
+
+  return {
+    x: x,
+    y: y,
+    name: `Rule of Thumb (y = ${fractionX}x)`,
+    mode: "lines"
+  }
+}
+
 function exponentialRegression(trace) {
   const points = _.zip(trace.x, trace.y);
   const result = regression.exponential(points);
@@ -138,9 +159,12 @@ async function main() {
     const sortedByPurchasePrice = _.sortBy(boats, 'adjustedPurchasePrice');
     const trace0 = extractTrace(sortedByPurchasePrice, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
     const trace1 = linearRegression(trace0);
+    const trace2 = ruleOfThumbLine(trace0, 0.10, 0);
+
     writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price (US$)", "Maintenance Cost (US$)",
       trace0,
-      trace1
+      trace1,
+      trace2
     ));
   }
 
@@ -149,21 +173,26 @@ async function main() {
     const filtered = _.filter(_.sortBy(boats, 'adjustedPurchasePrice'), boat => boat.adjustedPurchasePrice <= 50000);
     const trace0 = extractTrace(filtered, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
     const trace1 = linearRegression(trace0);
+    const trace2 = ruleOfThumbLine(trace0, 0.10, 0);
+
     writeStream.write(generateChartJs('maintenancePurchase50k', "Maintenance Cost vs Purchase Price (<$50k)", "Purchase Price (US$)", "Maintenance Cost (US$)",
       trace0,
-      trace1
+      trace1,
+      trace2
     ));
   }
-
 
   // maintenance cost vs new price
   {
     const boatsWithNewPriceSorted = _.sortBy(boatsWithNewPrice, 'adjustedNewPrice');
     const trace0 = extractTrace(boatsWithNewPriceSorted, "Boats", 'adjustedNewPrice', 'maintenancePrice');
     const trace1 = linearRegression(trace0);
+    const trace2 = ruleOfThumbLine(trace0, 0.02, 0);
+
     writeStream.write(generateChartJs('maintenanceNew', "Maintenance Cost vs New Price", "New Price (US$)", "Maintenance Cost (US$)",
       trace0,
-      trace1
+      trace1,
+      trace2
     ));
   }
 }
