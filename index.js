@@ -64,7 +64,13 @@ function extractTrace(data, name, xProperty, yProperty) {
     x: _.pluck(data, xProperty),
     y: _.pluck(data, yProperty),
     name: name,
-    mode: "markers"
+    mode: "markers",
+    marker: {
+      cmin: 0,
+      cmax: 5,
+      color: _.pluck(data, 'condition'),
+      colorscale: 'Viridis'
+    }
   };
 }
 
