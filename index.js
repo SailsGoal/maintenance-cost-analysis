@@ -182,6 +182,20 @@ async function main() {
     ));
   }
 
+  // maintenance cost vs purchase price, boats >= 15 years old at purchase
+  {
+    const filtered = _.filter(_.sortBy(boats, 'adjustedPurchasePrice'), boat => boat.ageAtPurchase >= 15);
+    const trace0 = extractTrace(filtered, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
+    const trace1 = linearRegression(trace0);
+    const trace2 = ruleOfThumbLine(trace0, 0.10, 0);
+
+    writeStream.write(generateChartJs('maintenancePurchase15yo', "Maintenance Cost vs Purchase Price (boats >= 15 years old)", "Purchase Price (US$)", "Maintenance Cost (US$)",
+      trace0,
+      trace1,
+      trace2
+    ));
+  }
+
   // maintenance cost vs new price
   {
     const boatsWithNewPriceSorted = _.sortBy(boatsWithNewPrice, 'adjustedNewPrice');
