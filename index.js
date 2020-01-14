@@ -56,7 +56,11 @@ function generateChartJs(divId, title, xAxisLabel, yAxisLabel, ...traces) {
     }
   };
 
-  return `Plotly.plot(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, ${JSON.stringify(layout)});\n`;
+  const config = {
+    responsive: true
+  };
+
+  return `Plotly.react(${JSON.stringify(divId)}, ${JSON.stringify(traces)}, ${JSON.stringify(layout)}, ${JSON.stringify(config)});\n`;
 }
 
 function extractTrace(data, name, xProperty, yProperty) {
