@@ -151,6 +151,8 @@ async function main() {
 
   const boatsWithNewPrice = _.filter(boats, boat => Boolean(boat.newPrice));
 
+  console.log(`${boats.length} total boats, ${boatsWithNewPrice.length} with new price`);
+
   // write plots
   const writeStream = fs.createWriteStream('./plots.js');
 
@@ -179,7 +181,7 @@ async function main() {
   }
 
   // maintenance cost vs purchase price <$50k
-  {
+  /*{
     const filtered = _.filter(_.sortBy(boats, 'adjustedPurchasePrice'), boat => boat.adjustedPurchasePrice <= 50000);
     const trace0 = extractTrace(filtered, "Boats", 'adjustedPurchasePrice', 'maintenancePrice');
     const trace1 = linearRegression(trace0);
@@ -190,7 +192,7 @@ async function main() {
       trace1,
       trace2
     ));
-  }
+  }*/
 
   // maintenance cost vs purchase price, boats >= 15 years old at purchase
   {
@@ -231,6 +233,20 @@ async function main() {
       trace2
     ));
   }
+
+  // maintenance cost vs new price, boats >= 15 years old at purchase
+  /*{
+    const filtered = _.filter(_.sortBy(boatsWithNewPrice, 'adjustedNewPrice'), boat => boat.ageAtPurchase >= 15);
+    const trace0 = extractTrace(filtered, "Boats", 'adjustedNewPrice', 'maintenancePrice');
+    const trace1 = linearRegression(trace0);
+    const trace2 = ruleOfThumbLine(trace0, 0.02, 0);
+
+    writeStream.write(generateChartJs('maintenanceNew15yoChart', "Maintenance Cost vs New Price (boats >= 15 years old)", "New Price (US$)", "Maintenance Cost (US$)",
+      trace0,
+      trace1,
+      trace2
+    ));
+  }*/
 }
 
 main();
