@@ -154,7 +154,7 @@ async function main() {
   {
     const boatsTrace = extractTrace(boatsWithNewPrice, "Boats", 'ageAtPurchase', 'depreciatedValue');
     const regression = exponentialRegression(boatsTrace);
-    writeStream.write(generateChartJs('depreciation', "Depreciation", "Age at Purchase (years)", "Fraction of Original Price",
+    writeStream.write(generateChartJs('depreciationChart', "Depreciation", "Age at Purchase (years)", "Fraction of Original Price",
       boatsTrace,
       regression,
     ));
@@ -167,7 +167,7 @@ async function main() {
     const trace1 = linearRegression(trace0);
     const trace2 = ruleOfThumbLine(trace0, 0.10, 0);
 
-    writeStream.write(generateChartJs('maintenancePurchase', "Maintenance Cost vs Purchase Price", "Purchase Price (US$)", "Maintenance Cost (US$)",
+    writeStream.write(generateChartJs('maintenancePurchaseChart', "Maintenance Cost vs Purchase Price", "Purchase Price (US$)", "Maintenance Cost (US$)",
       trace0,
       trace1,
       trace2
@@ -181,7 +181,7 @@ async function main() {
     const trace1 = linearRegression(trace0);
     const trace2 = ruleOfThumbLine(trace0, 0.10, 0);
 
-    writeStream.write(generateChartJs('maintenancePurchase50k', "Maintenance Cost vs Purchase Price (<$50k)", "Purchase Price (US$)", "Maintenance Cost (US$)",
+    writeStream.write(generateChartJs('maintenancePurchase50kChart', "Maintenance Cost vs Purchase Price (<$50k)", "Purchase Price (US$)", "Maintenance Cost (US$)",
       trace0,
       trace1,
       trace2
@@ -195,7 +195,7 @@ async function main() {
     const trace1 = linearRegression(trace0);
     const trace2 = ruleOfThumbLine(trace0, 0.10, 0);
 
-    writeStream.write(generateChartJs('maintenancePurchase15yo', "Maintenance Cost vs Purchase Price (boats >= 15 years old)", "Purchase Price (US$)", "Maintenance Cost (US$)",
+    writeStream.write(generateChartJs('maintenancePurchase15yoChart', "Maintenance Cost vs Purchase Price (boats >= 15 years old)", "Purchase Price (US$)", "Maintenance Cost (US$)",
       trace0,
       trace1,
       trace2
@@ -208,7 +208,7 @@ async function main() {
     const trace0 = extractTrace(boatsSortedByLength, "Boats", 'length', 'maintenancePrice');
     const trace1 = exponentialRegression(trace0);
 
-    writeStream.write(generateChartJs('maintenanceLength', "Maintenance Cost vs Length", "Length (ft)", "Maintenance Cost (US$)",
+    writeStream.write(generateChartJs('maintenanceLengthChart', "Maintenance Cost vs Length", "Length (ft)", "Maintenance Cost (US$)",
       trace0,
       trace1
     ));
@@ -221,7 +221,7 @@ async function main() {
     const trace1 = linearRegression(trace0);
     const trace2 = ruleOfThumbLine(trace0, 0.02, 0);
 
-    writeStream.write(generateChartJs('maintenanceNew', "Maintenance Cost vs New Price", "New Price (US$)", "Maintenance Cost (US$)",
+    writeStream.write(generateChartJs('maintenanceNewChart', "Maintenance Cost vs New Price", "New Price (US$)", "Maintenance Cost (US$)",
       trace0,
       trace1,
       trace2
