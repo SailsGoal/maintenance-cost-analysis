@@ -1,4 +1,4 @@
-This is the code I used to analyze data from a survey of boat owners to figure out if there is a rule of thumb that can actually estimate maintenance costs.  You can read the results in my blog post.
+This is the code I used to analyze data from a survey of boat owners to figure out if there is a rule of thumb that can actually estimate maintenance costs.  You can read the results in my [blog post](https://sailsgoal.com/blog/estimating-boat-maintenance-costs).
 
 It's my hope that this repo will serve as an example for anyone trying to get started with Plotly and simple statistics processing in Javascript.  It also allows the public to check the math in my blog post.
 
